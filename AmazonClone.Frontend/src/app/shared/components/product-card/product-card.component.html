@@ -1,0 +1,58 @@
+<div class="product-card" [routerLink]="['/product', product.productId]">
+  <!-- Best Seller Badge -->
+  <div class="badge-bestseller" *ngIf="product.isBestSeller">
+    Best Seller
+  </div>
+
+  <!-- Wishlist Action -->
+  <button class="btn-wishlist" (click)="addToWishlist($event)" aria-label="Add to Wish List">
+    <lucide-icon [name]="HeartIcon" class="heart-icon"></lucide-icon>
+  </button>
+
+  <!-- Product Image -->
+  <div class="img-container">
+    <img [src]="product.primaryImageUrl || 'https://via.placeholder.com/300x300?text=Amazon+Product'" [alt]="product.productName" loading="lazy" />
+  </div>
+
+  <!-- Product Info -->
+  <div class="product-info">
+    <h3 class="product-title" [title]="product.productName">{{ product.productName }}</h3>
+    
+    <!-- Rating -->
+    <div class="rating-row" *ngIf="product.rating !== undefined">
+      <div class="stars">
+        <lucide-icon [name]="StarIcon" class="star active" *ngFor="let _ of [1,2,3,4,5]"></lucide-icon>
+      </div>
+      <span class="rating-num">{{ product.rating | number:'1.1-1' }}</span>
+      <span class="review-count">({{ product.reviewCount || 0 }})</span>
+    </div>
+
+    <!-- Pricing -->
+    <div class="price-row">
+      <span class="currency">$</span>
+      <span class="amount">{{ (product.discountPrice || product.price) | number:'1.2-2' }}</span>
+      <span class="old-price" *ngIf="product.discountPrice && product.discountPrice < product.price">
+        ${{ product.price | number:'1.2-2' }}
+      </span>
+    </div>
+
+    <!-- Stock Indicator -->
+    <div class="stock-info">
+      <span class="stock-badge-in" *ngIf="product.availableStock > 0; else outOfStock">
+        In Stock ({{ product.availableStock }} left)
+      </span>
+      <ng-template #outOfStock>
+        <span class="stock-badge-out">Currently Unavailable</span>
+      </ng-template>
+    </div>
+
+    <!-- Quick Add Button -->
+    <button 
+      class="btn-primary btn-add-cart" 
+      [disabled]="product.availableStock <= 0" 
+      (click)="addToCart($event)">
+      <lucide-icon [name]="CartIcon" class="cart-icon"></lucide-icon>
+      Add to Cart
+    </button>
+  </div>
+</div>

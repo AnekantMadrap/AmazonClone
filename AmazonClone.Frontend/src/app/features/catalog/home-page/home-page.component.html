@@ -1,0 +1,107 @@
+<div class="home-container">
+  <!-- Hero Banner Carousel Shell -->
+  <section class="hero-section">
+    <div class="hero-bg"></div>
+    <div class="container hero-content">
+      <div class="hero-card glass-panel">
+        <span class="badge-new">Enterprise Release .NET 10</span>
+        <h1 class="hero-title">Discover Enterprise-Grade Electronics & Tech</h1>
+        <p class="hero-subtitle">High-speed SQL queries, Redis caching, and instantaneous Signals-powered cart processing.</p>
+        <div class="hero-actions">
+          <a routerLink="/search" [queryParams]="{ sortBy: 'popularity' }" class="btn-primary hero-btn">
+            Shop Best Sellers
+          </a>
+          <a routerLink="/search" [queryParams]="{ sortBy: 'newest' }" class="btn-secondary hero-btn">
+            Explore New Releases
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Value propositions -->
+  <section class="features-bar container">
+    <div class="feature-item glass-panel">
+      <lucide-icon [name]="TruckIcon" class="feat-icon"></lucide-icon>
+      <div>
+        <h4>Free Enterprise Shipping</h4>
+        <p>Instant dispatch across all prime locations</p>
+      </div>
+    </div>
+    <div class="feature-item glass-panel">
+      <lucide-icon [name]="ZapIcon" class="feat-icon"></lucide-icon>
+      <div>
+        <h4>Signals Reactive State</h4>
+        <p>Zero-latency UI updates without page reloads</p>
+      </div>
+    </div>
+    <div class="feature-item glass-panel">
+      <lucide-icon [name]="ShieldIcon" class="feat-icon"></lucide-icon>
+      <div>
+        <h4>Encrypted & Authenticated</h4>
+        <p>ASP.NET Core Identity & JWT Bearer protected</p>
+      </div>
+    </div>
+    <div class="feature-item glass-panel">
+      <lucide-icon [name]="RefreshIcon" class="feat-icon"></lucide-icon>
+      <div>
+        <h4>Guest Cart Merging</h4>
+        <p>Seamlessly sync your cart when you sign in</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Grid -->
+  <section class="categories-section container">
+    <div class="section-header">
+      <h2>Shop by Category</h2>
+      <a routerLink="/search" class="view-all-link">View All Categories <lucide-icon [name]="ChevronRightIcon" class="chevron"></lucide-icon></a>
+    </div>
+
+    <div class="category-grid" *ngIf="!catalogStore.loadingCategories(); else loadingCats">
+      <a 
+        *ngFor="let cat of categories()" 
+        [routerLink]="['/search']" 
+        [queryParams]="{ categoryId: cat.categoryId }" 
+        class="category-card">
+        <div class="cat-img-placeholder">
+          <span>{{ cat.categoryName.charAt(0) }}</span>
+        </div>
+        <h3>{{ cat.categoryName }}</h3>
+        <span class="shop-now">Shop now <lucide-icon [name]="ChevronRightIcon" class="sm-chevron"></lucide-icon></span>
+      </a>
+    </div>
+    <ng-template #loadingCats>
+      <div class="loading-grid">
+        <div class="skeleton-card" *ngFor="let _ of [1,2,3,4]"></div>
+      </div>
+    </ng-template>
+  </section>
+
+  <!-- Best Sellers Carousel via @defer (on viewport) -->
+  <section class="bestsellers-section container">
+    <div class="section-header">
+      <h2>Best Sellers in Enterprise Catalog</h2>
+      <a routerLink="/search" [queryParams]="{ sortBy: 'popularity' }" class="view-all-link">See More <lucide-icon [name]="ChevronRightIcon" class="chevron"></lucide-icon></a>
+    </div>
+
+    @defer (on viewport) {
+      <div class="products-grid" *ngIf="!catalogStore.loadingBestSellers(); else loadingProducts">
+        <app-product-card *ngFor="let product of bestSellers()" [product]="product" />
+      </div>
+      <ng-template #loadingProducts>
+        <div class="products-grid">
+          <div class="skeleton-product" *ngFor="let _ of [1,2,3,4]"></div>
+        </div>
+      </ng-template>
+    } @placeholder {
+      <div class="products-grid">
+        <div class="skeleton-product" *ngFor="let _ of [1,2,3,4]"></div>
+      </div>
+    } @loading {
+      <div class="products-grid">
+        <div class="skeleton-product" *ngFor="let _ of [1,2,3,4]"></div>
+      </div>
+    }
+  </section>
+</div>

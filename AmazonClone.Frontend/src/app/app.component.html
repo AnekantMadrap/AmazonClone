@@ -1,0 +1,7 @@
+<div class="app-shell">
+  <app-navbar *ngIf="!isAuthPage()" />
+  <main class="main-content">
+    <router-outlet />
+  </main>
+  <app-footer *ngIf="!isAuthPage()" />
+</div>

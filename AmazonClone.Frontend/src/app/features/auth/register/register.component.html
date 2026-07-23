@@ -1,0 +1,127 @@
+<div class="auth-page container">
+  <div class="auth-card glass-panel">
+    <!-- Header -->
+    <div class="auth-header">
+      <a routerLink="/" class="auth-logo">
+        amazon<span class="logo-domain">.enterprise</span>
+      </a>
+      <h2>Create your Amazon Account</h2>
+      <p class="subtitle">Join the Enterprise catalog to save items to your wishlist, track orders, and sync carts.</p>
+    </div>
+
+    <!-- Error Banner from Client Validation -->
+    <div class="alert-banner alert-error" *ngIf="validationError()">
+      <lucide-icon [name]="AlertIcon" class="alert-icon"></lucide-icon>
+      <span>{{ validationError() }}</span>
+    </div>
+
+    <!-- Error Banner from Server -->
+    <div class="alert-banner alert-error" *ngIf="authStore.error()">
+      <lucide-icon [name]="AlertIcon" class="alert-icon"></lucide-icon>
+      <span>{{ authStore.error() }}</span>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="onSubmit()" class="auth-form">
+      <!-- Full Name Field -->
+      <div class="form-group">
+        <label for="fullName">Full Name *</label>
+        <div class="input-wrapper">
+          <lucide-icon [name]="UserIcon" class="input-icon"></lucide-icon>
+          <input 
+            type="text" 
+            id="fullName" 
+            placeholder="John Doe" 
+            [ngModel]="fullName()" 
+            (ngModelChange)="fullName.set($event)"
+            name="fullName" 
+            required 
+            autocomplete="name" />
+        </div>
+      </div>
+
+      <!-- Email Field -->
+      <div class="form-group">
+        <label for="email">Email Address *</label>
+        <div class="input-wrapper">
+          <lucide-icon [name]="MailIcon" class="input-icon"></lucide-icon>
+          <input 
+            type="email" 
+            id="email" 
+            placeholder="name@enterprise.com" 
+            [ngModel]="email()" 
+            (ngModelChange)="email.set($event)"
+            name="email" 
+            required 
+            autocomplete="email" />
+        </div>
+      </div>
+
+      <!-- Phone Number Field (Optional) -->
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number (Optional)</label>
+        <div class="input-wrapper">
+          <lucide-icon [name]="PhoneIcon" class="input-icon"></lucide-icon>
+          <input 
+            type="tel" 
+            id="phoneNumber" 
+            placeholder="+1 (555) 000-0000" 
+            [ngModel]="phoneNumber()" 
+            (ngModelChange)="phoneNumber.set($event)"
+            name="phoneNumber" 
+            autocomplete="tel" />
+        </div>
+      </div>
+
+      <!-- Password Field -->
+      <div class="form-group">
+        <label for="password">Password *</label>
+        <div class="input-wrapper">
+          <lucide-icon [name]="LockIcon" class="input-icon"></lucide-icon>
+          <input 
+            type="password" 
+            id="password" 
+            placeholder="At least 6 characters" 
+            [ngModel]="password()" 
+            (ngModelChange)="password.set($event)"
+            name="password" 
+            required 
+            autocomplete="new-password" />
+        </div>
+      </div>
+
+      <!-- Confirm Password Field -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password *</label>
+        <div class="input-wrapper">
+          <lucide-icon [name]="LockIcon" class="input-icon"></lucide-icon>
+          <input 
+            type="password" 
+            id="confirmPassword" 
+            placeholder="Re-enter password" 
+            [ngModel]="confirmPassword()" 
+            (ngModelChange)="confirmPassword.set($event)"
+            name="confirmPassword" 
+            required 
+            autocomplete="new-password" />
+        </div>
+      </div>
+
+      <!-- Submit CTA -->
+      <button 
+        type="submit" 
+        class="btn-primary auth-submit" 
+        [disabled]="authStore.loading() || !fullName() || !email() || !password() || !confirmPassword()">
+        <span *ngIf="!authStore.loading()">Create Account</span>
+        <span *ngIf="authStore.loading()" class="spinner">Creating account...</span>
+        <lucide-icon [name]="ArrowRightIcon" class="btn-icon" *ngIf="!authStore.loading()"></lucide-icon>
+      </button>
+    </form>
+
+    <!-- Footer Links -->
+    <div class="auth-footer">
+      <span>Already have an account?</span>
+      <a routerLink="/login" class="login-link">Sign in to your account</a>
+    </div>
+  </div>
+</div>

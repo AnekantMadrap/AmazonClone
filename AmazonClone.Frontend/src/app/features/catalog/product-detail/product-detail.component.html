@@ -1,0 +1,169 @@
+<div class="pdp-container container" *ngIf="!loading() && product(); else loadingState">
+  <!-- Left: Multi-Image Zoom Gallery -->
+  <div class="pdp-gallery">
+    <!-- Thumbnails -->
+    <div class="thumbnails" *ngIf="product()!.imageGallery && product()!.imageGallery!.length > 0">
+      <div 
+        class="thumb-item" 
+        [class.active]="selectedImage() === img" 
+        *ngFor="let img of product()!.imageGallery" 
+        (click)="selectedImage.set(img)">
+        <img [src]="img" [alt]="product()!.productName" />
+      </div>
+    </div>
+
+    <!-- Main Image -->
+    <div class="main-image-box">
+      <img [src]="selectedImage() || product()!.primaryImageUrl || 'https://via.placeholder.com/500x500?text=Amazon+Product'" [alt]="product()!.productName" class="main-image" />
+    </div>
+  </div>
+
+  <!-- Middle: Product Info & Variants -->
+  <div class="pdp-info">
+    <span class="brand-link" *ngIf="product()!.brandName">Brand: {{ product()!.brandName }}</span>
+    <h1 class="pdp-title">{{ product()!.productName }}</h1>
+
+    <!-- Rating -->
+    <div class="rating-row" *ngIf="product()!.rating !== undefined">
+      <div class="stars">
+        <lucide-icon [name]="StarIcon" class="star active" *ngFor="let _ of [1,2,3,4,5]"></lucide-icon>
+      </div>
+      <span class="rating-num">{{ product()!.rating | number:'1.1-1' }}</span>
+      <span class="review-count">{{ product()!.reviewCount || 0 }} ratings</span>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Price -->
+    <div class="price-box">
+      <span class="price-label">Price:</span>
+      <span class="price-val">${{ displayPrice() | number:'1.2-2' }}</span>
+      <span class="old-price" *ngIf="product()!.discountPrice && product()!.discountPrice! < product()!.price">
+        ${{ product()!.price | number:'1.2-2' }}
+      </span>
+    </div>
+
+    <!-- Short Description -->
+    <p class="short-desc" *ngIf="product()!.shortDescription">{{ product()!.shortDescription }}</p>
+
+    <!-- Variant Selectors: Color -->
+    <div class="variant-group" *ngIf="colors().length > 0">
+      <h4>Color: <span class="selected-val">{{ selectedVariant()?.color }}</span></h4>
+      <div class="variant-options">
+        <button 
+          class="variant-chip" 
+          [class.active]="selectedVariant()?.color === c" 
+          *ngFor="let c of colors()" 
+          (click)="selectColor(c)">
+          {{ c }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Variant Selectors: Size -->
+    <div class="variant-group" *ngIf="sizes().length > 0">
+      <h4>Size: <span class="selected-val">{{ selectedVariant()?.size }}</span></h4>
+      <div class="variant-options">
+        <button 
+          class="variant-chip" 
+          [class.active]="selectedVariant()?.size === s" 
+          *ngFor="let s of sizes()" 
+          (click)="selectSize(s)">
+          {{ s }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Variant Selectors: RAM -->
+    <div class="variant-group" *ngIf="rams().length > 0">
+      <h4>Memory (RAM): <span class="selected-val">{{ selectedVariant()?.ram }}</span></h4>
+      <div class="variant-options">
+        <button 
+          class="variant-chip" 
+          [class.active]="selectedVariant()?.ram === r" 
+          *ngFor="let r of rams()" 
+          (click)="selectRam(r)">
+          {{ r }}
+        </button>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Long Description / Specifications -->
+    <div class="long-desc-section" *ngIf="product()!.longDescription">
+      <h3>About this item</h3>
+      <p class="long-desc">{{ product()!.longDescription }}</p>
+    </div>
+  </div>
+
+  <!-- Right: Buy Box Card -->
+  <div class="pdp-buybox glass-panel">
+    <div class="buybox-price">${{ displayPrice() | number:'1.2-2' }}</div>
+    
+    <div class="delivery-info">
+      <lucide-icon [name]="TruckIcon" class="info-icon"></lucide-icon>
+      <span><strong>FREE Enterprise Delivery</strong> inside your workspace. Order now!</span>
+    </div>
+
+    <div class="location-check">
+      <span>Deliver to New York 10001</span>
+    </div>
+
+    <!-- Stock Status -->
+    <div class="stock-badge">
+      <span class="stock-badge-in" *ngIf="displayStock() > 0; else outOfStock">
+        In Stock ({{ displayStock() }} units available)
+      </span>
+      <ng-template #outOfStock>
+        <span class="stock-badge-out">Currently Out of Stock</span>
+      </ng-template>
+    </div>
+
+    <!-- Quantity Selector -->
+    <div class="quantity-box" *ngIf="displayStock() > 0">
+      <label for="qtySelect">Quantity:</label>
+      <select id="qtySelect" [ngModel]="quantity()" (ngModelChange)="quantity.set($event)" class="qty-select">
+        <option [value]="q" *ngFor="let q of [1,2,3,4,5,6,7,8,9,10]">{{ q }}</option>
+      </select>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="buybox-actions">
+      <button 
+        class="btn-primary btn-add-cart" 
+        [disabled]="displayStock() <= 0 || cartStore.loading()" 
+        (click)="addToCart()">
+        <lucide-icon [name]="CartIcon" class="btn-icon"></lucide-icon>
+        {{ cartStore.loading() ? 'Adding...' : 'Add to Cart' }}
+      </button>
+
+      <button 
+        class="btn-secondary btn-wishlist" 
+        (click)="addToWishlist()">
+        <lucide-icon [name]="HeartIcon" class="btn-icon"></lucide-icon>
+        Add to Wish List
+      </button>
+    </div>
+
+    <!-- Trust Badges -->
+    <div class="trust-badges">
+      <div class="trust-item">
+        <lucide-icon [name]="ShieldIcon" class="trust-icon"></lucide-icon>
+        <span>Secure transaction</span>
+      </div>
+      <div class="trust-item">
+        <lucide-icon [name]="RotateIcon" class="trust-icon"></lucide-icon>
+        <span>30-day return policy</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loadingState>
+  <div class="pdp-container container">
+    <div class="skeleton-gallery"></div>
+    <div class="skeleton-info"></div>
+    <div class="skeleton-buybox"></div>
+  </div>
+</ng-template>

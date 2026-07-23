@@ -1,0 +1,43 @@
+<div class="summary-card glass-panel">
+  <div class="free-shipping-bar" *ngIf="shippingCost() === 0">
+    <span class="check-icon">✓</span>
+    <span>Your order qualifies for <strong>FREE Enterprise Shipping</strong>!</span>
+  </div>
+  <div class="shipping-alert" *ngIf="shippingCost() > 0">
+    Add <strong>${{ (35 - subTotal) | number:'1.2-2' }}</strong> more of eligible items to unlock FREE shipping!
+  </div>
+
+  <h3 class="summary-title">Subtotal ({{ totalItems }} items): <span class="summary-price">${{ subTotal | number:'1.2-2' }}</span></h3>
+
+  <div class="breakdown">
+    <div class="row">
+      <span>Items Subtotal:</span>
+      <span>${{ subTotal | number:'1.2-2' }}</span>
+    </div>
+    <div class="row">
+      <span>Estimated Shipping:</span>
+      <span>{{ shippingCost() === 0 ? 'FREE' : ('$' + (shippingCost() | number:'1.2-2')) }}</span>
+    </div>
+    <div class="row">
+      <span>Estimated Tax (8%):</span>
+      <span>${{ estimatedTax() | number:'1.2-2' }}</span>
+    </div>
+    <hr class="divider" />
+    <div class="row total-row">
+      <span>Order Total:</span>
+      <span>${{ orderTotal() | number:'1.2-2' }}</span>
+    </div>
+  </div>
+
+  <button 
+    class="btn-primary btn-checkout" 
+    [disabled]="totalItems === 0" 
+    [routerLink]="isAuthenticated ? '/checkout' : '/login'">
+    <lucide-icon [name]="LockIcon" class="lock-icon"></lucide-icon>
+    Proceed to Enterprise Checkout
+  </button>
+
+  <div class="guest-notice" *ngIf="!isAuthenticated">
+    <p>Sign in to merge your guest cart and apply saved addresses!</p>
+  </div>
+</div>

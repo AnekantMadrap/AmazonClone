@@ -1,0 +1,72 @@
+<div class="wishlist-page container">
+  <div class="wishlist-card glass-panel">
+    <!-- Header -->
+    <div class="wishlist-header">
+      <div class="header-left">
+        <lucide-icon [name]="HeartIcon" class="heart-icon"></lucide-icon>
+        <h2>Your Enterprise Wish List</h2>
+      </div>
+      <span class="item-count">{{ count() }} {{ count() === 1 ? 'item' : 'items' }}</span>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Not Authenticated Alert -->
+    <div class="guest-alert glass-panel" *ngIf="!isAuthenticated()">
+      <h3>Please sign in to view and save your Wish List</h3>
+      <p>Wishlists are securely stored in your account database so you can access them from any workspace.</p>
+      <a routerLink="/login" class="btn-primary signin-btn">Sign In Now</a>
+    </div>
+
+    <!-- Error Banner -->
+    <div class="error-banner" *ngIf="wishlistStore.error()">
+      <p>{{ wishlistStore.error() }}</p>
+    </div>
+
+    <!-- Empty State -->
+    <div class="wishlist-empty" *ngIf="isAuthenticated() && count() === 0">
+      <h3>Your Wish List is empty</h3>
+      <p>Save items you're interested in while browsing our catalog. Click the heart icon on any product card!</p>
+      <a routerLink="/search" class="btn-primary">Explore Products</a>
+    </div>
+
+    <!-- Items Grid / List -->
+    <div class="wishlist-items" *ngIf="isAuthenticated() && count() > 0 && wishlist()">
+      <div class="wishlist-item-row" *ngFor="let item of wishlist()!.items">
+        <!-- Image -->
+        <a [routerLink]="['/product', item.productId]" class="item-img-link">
+          <img [src]="item?.primaryImageUrl || 'https://via.placeholder.com/150x150?text=Product'" [alt]="item.productName" />
+        </a>
+
+        <!-- Details -->
+        <div class="item-details">
+          <a [routerLink]="['/product', item.productId]" class="item-title">{{ item.productName }}</a>
+          <span class="date-added">Added on {{ item.addedDate | date:'mediumDate' }}</span>
+
+          <div class="price-row">
+            <span class="item-price">${{ item.price | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="item-actions">
+          <button 
+            class="btn-primary btn-move" 
+            [disabled]="wishlistStore.loading()" 
+            (click)="moveToCart(item.productId)">
+            <lucide-icon [name]="CartIcon" class="btn-icon"></lucide-icon>
+            Move to Cart
+          </button>
+
+          <button 
+            class="btn-delete" 
+            [disabled]="wishlistStore.loading()" 
+            (click)="removeItem(item.productId)">
+            <lucide-icon [name]="TrashIcon" class="btn-icon"></lucide-icon>
+            Remove
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

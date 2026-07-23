@@ -1,0 +1,6 @@
+@AmazonClone_HostAddress = http://localhost:5064
+
+GET {{AmazonClone_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

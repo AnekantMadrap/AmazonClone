@@ -1,0 +1,82 @@
+<div class="cart-page container">
+  <!-- Left Main Cart Section -->
+  <div class="cart-main glass-panel">
+    <div class="cart-header">
+      <div class="header-left">
+        <lucide-icon [name]="CartIcon" class="bag-icon"></lucide-icon>
+        <h2>Shopping Cart</h2>
+      </div>
+      <button class="btn-clear" *ngIf="totalItems() > 0" (click)="clearCart()">Clear Cart</button>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Empty State -->
+    <div class="cart-empty" *ngIf="totalItems() === 0">
+      <h3>Your Amazon Enterprise Cart is empty</h3>
+      <p>Your shopping cart lives to serve. Give it purpose — fill it with electronics, enterprise tech, and more.</p>
+      <div class="empty-actions">
+        <a routerLink="/search" class="btn-primary">Continue Shopping</a>
+        <a *ngIf="!isAuthenticated()" routerLink="/login" class="btn-secondary">Sign in to your account</a>
+      </div>
+    </div>
+
+    <!-- Items List -->
+    <div class="cart-items" *ngIf="totalItems() > 0 && cart()">
+      <div class="cart-item-row" *ngFor="let item of cart()!.items">
+        <!-- Image -->
+        <a [routerLink]="['/product', item.productId]" class="item-img-link">
+          <img [src]="item.primaryImageUrl || 'https://via.placeholder.com/150x150?text=Product'" [alt]="item.productName" />
+        </a>
+
+        <!-- Details -->
+        <div class="item-details">
+          <a [routerLink]="['/product', item.productId]" class="item-title">{{ item.productName }}</a>
+          <span class="item-stock" *ngIf="item.availableStock > 0; else outOfStock">In Stock</span>
+          <ng-template #outOfStock><span class="item-stock-out">Out of Stock</span></ng-template>
+
+          <div class="item-variant-info" *ngIf="item.color || item.size">
+            <span *ngIf="item.color">Color: {{ item.color }}</span>
+            <span *ngIf="item.size">Size: {{ item.size }}</span>
+          </div>
+
+          <!-- Controls -->
+          <div class="item-controls">
+            <div class="qty-control">
+              <label [for]="'qty-' + item.cartItemId">Qty:</label>
+              <select 
+                [id]="'qty-' + item.cartItemId" 
+                [(ngModel)]="item.quantity" 
+                (change)="updateQty(item.cartItemId, $event)" 
+                class="qty-select">
+                <option value="0">0 (Delete)</option>
+                <option [value]="q" *ngFor="let q of [1,2,3,4,5,6,7,8,9,10]">{{ q }}</option>
+              </select>
+            </div>
+
+            <span class="control-sep">|</span>
+
+            <button class="btn-delete" (click)="removeItem(item.cartItemId)">
+              <lucide-icon [name]="TrashIcon" class="trash-icon"></lucide-icon>
+              Delete
+            </button>
+          </div>
+        </div>
+
+        <!-- Price -->
+        <div class="item-price-col">
+          <span class="item-price">${{ item.unitPrice | number:'1.2-2' }}</span>
+          <span class="item-subtotal">Subtotal: <strong>${{ item.totalPrice | number:'1.2-2' }}</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Order Summary Sidebar -->
+  <div class="cart-sidebar">
+    <app-order-summary 
+      [subTotal]="subTotal()" 
+      [totalItems]="totalItems()" 
+      [isAuthenticated]="isAuthenticated()" />
+  </div>
+</div>

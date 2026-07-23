@@ -1,0 +1,64 @@
+<aside class="sidebar-container glass-panel">
+  <div class="sidebar-header">
+    <h3>Filters</h3>
+    <button class="btn-clear" (click)="clearAllFilters()" *ngIf="currentFilters.categoryId || currentFilters.minPrice || currentFilters.minRating">
+      Clear All
+    </button>
+  </div>
+
+  <!-- Department / Category -->
+  <div class="filter-group">
+    <h4>Department</h4>
+    <ul class="filter-list">
+      <li [class.active]="!currentFilters.categoryId" (click)="selectCategory(undefined)">
+        <span>All Departments</span>
+      </li>
+      <li 
+        *ngFor="let cat of categories()" 
+        [class.active]="currentFilters.categoryId === cat.categoryId"
+        (click)="selectCategory(cat.categoryId)">
+        <span>{{ cat.categoryName }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Brands Filter -->
+  <div class="filter-group" *ngIf="brands().length > 0">
+    <h4>Brand</h4>
+    <ul class="filter-list">
+      <li [class.active]="!currentFilters.brandId" (click)="selectBrand(undefined)">
+        <span>All Brands</span>
+      </li>
+      <li 
+        *ngFor="let brand of brands()" 
+        [class.active]="currentFilters.brandId === brand.brandId"
+        (click)="selectBrand(brand.brandId)">
+        <span>{{ brand.brandName }}</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Customer Reviews -->
+  <div class="filter-group">
+    <h4>Customer Review</h4>
+    <ul class="filter-list">
+      <li *ngFor="let stars of [4, 3, 2, 1]" [class.active]="currentFilters.minRating === stars" (click)="selectRating(stars)">
+        <div class="stars-row">
+          <lucide-icon [name]="StarIcon" class="star active" *ngFor="let _ of [1,2,3,4,5]; let idx = index" [class.inactive]="idx >= stars"></lucide-icon>
+          <span class="rating-text">& Up</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Price Range -->
+  <div class="filter-group">
+    <h4>Price ($)</h4>
+    <div class="price-inputs">
+      <input type="number" placeholder="Min" [ngModel]="minPriceInput()" (ngModelChange)="minPriceInput.set($event)" class="price-input" />
+      <span>to</span>
+      <input type="number" placeholder="Max" [ngModel]="maxPriceInput()" (ngModelChange)="maxPriceInput.set($event)" class="price-input" />
+      <button class="btn-go" (click)="applyPriceFilter()">Go</button>
+    </div>
+  </div>
+</aside>

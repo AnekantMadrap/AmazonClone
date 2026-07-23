@@ -1,0 +1,75 @@
+<div class="search-page container">
+  <!-- Sidebar Filters -->
+  <div class="search-sidebar">
+    <app-filter-sidebar [currentFilters]="currentFilters()" (filterChange)="onFilterChanged($event)" />
+  </div>
+
+  <!-- Main Search Content -->
+  <div class="search-main">
+    <!-- Top Bar with Total & Sorting -->
+    <div class="search-topbar glass-panel">
+      <div class="result-count">
+        <span *ngIf="loading()">Searching enterprise catalog...</span>
+        <span *ngIf="!loading() && results()">
+          Showing {{ ((results()!.pageNumber - 1) * results()!.pageSize) + 1 }} -
+          {{ Math.min(results()!.pageNumber * results()!.pageSize, results()!.totalCount) }}
+          of <strong>{{ results()!.totalCount }}</strong> results
+          <ng-container *ngIf="currentFilters().query"> for "<strong>{{ currentFilters().query
+              }}</strong>"</ng-container>
+        </span>
+      </div>
+
+      <div class="sort-controls">
+        <label for="sortSelect">Sort by:</label>
+        <select id="sortSelect" [value]="currentFilters().sortBy || 'popularity'" (change)="onSortChanged($event)"
+          class="sort-select">
+          <option>All</option>
+          <option value="popularity">Best Sellers & Popularity</option>
+          <option value="price_asc">Price: Low to High</option>
+          <option value="price_desc">Price: High to Low</option>
+          <option value="newest">Newest Arrivals</option>
+          <option value="rating">Avg. Customer Review</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Loading Skeleton Grid -->
+    <div class="products-grid" *ngIf="loading()">
+      <div class="skeleton-card" *ngFor="let _ of [1,2,3,4,5,6]"></div>
+    </div>
+
+    <!-- Error state -->
+    <div class="error-banner glass-panel" *ngIf="!loading() && error()">
+      <p>{{ error() }}</p>
+      <button class="btn-primary" (click)="executeSearch(currentFilters())">Retry Search</button>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="products-grid" *ngIf="!loading() && !error() && results()?.items?.length">
+      <app-product-card *ngFor="let product of results()!.items" [product]="product" />
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-banner glass-panel" *ngIf="!loading() && !error() && results() && results()!.items.length === 0">
+      <h3>No products matched your criteria</h3>
+      <p>Try checking your spelling or clearing some filters.</p>
+      <button class="btn-secondary" (click)="onFilterChanged({})">Clear All Filters</button>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination-bar" *ngIf="!loading() && results() && results()!.totalPages > 1">
+      <button class="page-btn" [disabled]="results()!.pageNumber <= 1" (click)="goToPage(results()!.pageNumber - 1)">
+        Previous
+      </button>
+
+      <span class="page-info">
+        Page <strong>{{ results()!.pageNumber }}</strong> of <strong>{{ results()!.totalPages }}</strong>
+      </span>
+
+      <button class="page-btn" [disabled]="results()!.pageNumber >= results()!.totalPages"
+        (click)="goToPage(results()!.pageNumber + 1)">
+        Next
+      </button>
+    </div>
+  </div>
+</div>

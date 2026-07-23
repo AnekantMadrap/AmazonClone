@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="AmazonClone.Application/AmazonClone.Application.csproj" />
+  <Project Path="AmazonClone.Infrastructure/AmazonClone.Infrastructure.csproj" />
+  <Project Path="AmazonClone/AmazonClone.API.csproj" />
+  <Project Path="Class Library (.NET)/AmazonClone.Domain.csproj" />
+</Solution>
